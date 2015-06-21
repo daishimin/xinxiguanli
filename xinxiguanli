@@ -1,0 +1,303 @@
+#include <stdio.h>
+#include <windows.h>
+#include <string.h>
+#define N 100
+struct student
+{
+    int num;
+ char name[10];
+ char sex; 
+ int age;
+ char birthday[30];
+ char address[30];
+ long int tel;
+ char mail[30];
+}stu[50];
+
+void menu();
+void record();
+void save(int);
+void display();
+void del();
+void query();
+void query_num();
+void query_name();
+void change(); 
+
+void menu()  
+{
+ system("cls");
+ printf("\n\n\n");
+ printf("\t\t\t--------------------------------\n");
+ printf("\t\t\t+        学生信息管理系统      |\n"); 
+ printf("\t\t\t--------------------------------\n");
+ printf("\t\t\t+      1.录入学生信息          |\n");
+ printf("\t\t\t+      2.浏览学生信息          |\n");
+ printf("\t\t\t+      3.查询学生信息          |\n");
+ printf("\t\t\t+      4.删除学生信息          |\n");
+    printf("\t\t\t+      5.修改学生信息          |\n");
+ printf("\t\t\t+      6.退出系统              |\n");
+    printf("\t\t\t+*·*·*·*·*·*·*·*·*·*·|\n");
+    printf("\t\t\t--------------------------------\n");
+    printf("\n");
+}
+
+void main()
+{  
+ menu(); 
+ int choice;
+ char a;
+ printf("请输入您的选择：");
+ scanf("%d",&choice);
+
+ system("cls");
+ switch(choice)
+ {
+ case 1:record();
+  break;
+ case 2:display();
+  break;
+ case 3:query();
+  break;
+ case 4:del();
+  break;
+ case 5:change();
+  break;
+ case 6:exit(0);
+  break;
+ default :printf("无效选项、请重新选择!");
+  break;
+ }
+ getchar();
+ printf("\n");
+ printf("是否继续该系统(y or n):\n");
+ scanf("%c",&a);
+ if(a=='y')
+  main();
+ else
+  exit(0);
+}
+void record() 
+{system("cls");
+ int i,m;
+ printf("************输入学生信息************\n");
+ printf("请输入需要录入学生的总人数:\n");
+ scanf("%d",&m);
+ for (i=0;i<m;i++)
+ {
+  printf("学号为： ");
+  stu[i].num=i+1;
+  printf("%d ",stu[i].num);
+  printf("\n");
+  printf("请输入学生的姓名:  ");
+  scanf("%s",stu[i].name);
+  getchar();
+  printf("请输入学生的性别:  ");
+  scanf("%c",&stu[i].sex);
+  printf("请输入学生的年龄:  ");
+  scanf("%d",&stu[i].age);
+  printf("请输入学生的出生年月:  ");
+  scanf("%s",stu[i].birthday);
+  printf("请输入学生的电子邮箱:  ");
+  scanf("%s",&stu[i].mail);
+  printf("请输入学生的住址:  ");
+  scanf("%s",stu[i].address);
+        printf("请输入学生的电话:  ");
+  scanf("%ld",&stu[i].tel);
+  printf("\n");
+  
+ }
+
+ save(m);
+}
+
+void save(int m) 
+{
+ int i;
+ FILE*fp;
+ if ((fp=fopen("message","wb"))==NULL)
+ {
+  printf ("cannot open file\n");
+  exit(0);
+ }
+ for (i=0;i<m;i++)
+  if (fwrite(&stu[i],sizeof(struct student),1,fp)!=1)
+   printf("file write error\n");
+  fclose(fp);
+}
+
+int load() 
+{
+ FILE *fp;
+ int i=0;
+ if((fp=fopen("message","rb"))==NULL)
+ {
+  printf ("cannot open file\n");
+  exit(0);
+ }
+ else
+ {
+  do
+  {
+   fread(&stu[i],sizeof(struct student),1,fp);
+   i++;
+  }
+  while(feof(fp)==0);
+ }
+ fclose(fp);
+ return(i-1);
+}
+
+void display()
+{system("cls");
+ int i;
+ int m=load() ; 
+ printf("************浏览学生信息************\n");
+ printf("\n学号\t姓名\t性别\t年龄\t生日\t电子邮箱\t住址\t电话   \n");
+ for(i=0;i<m;i++)
+ printf("\n  %d\t%s\t%c\t%d\t%s\t%s\t%s\t%ld\n",stu[i].num,stu[i].name,stu[i].sex,stu[i].age,stu[i].birthday,stu[i].mail,stu[i].address,stu[i].tel); 
+}
+
+ 
+void del()  
+{
+ system("cls");
+    int m=load();
+ int i,j,n,t,flag;
+ char name[20];
+ printf("\n 原有的学生信息为:\n");
+    display();  
+    printf("\n");
+ printf("请输入要删除的学生的姓名:\n");
+ scanf("%s",name);
+ for(flag=1,i=0;flag&&i<m;i++)
+ {
+  if(strcmp(stu[i].name,name)==0)
+  {
+   
+            printf("\n学号\t姓名\t性别\t年龄\t生日\t电子邮箱\t住址\t电话   \n");
+   printf("\n%d\t%s\t%c\t%d\t%s\t%s\t%s\t%ld\n",stu[i].num,stu[i].name,stu[i].sex,stu[i].age,stu[i].birthday,stu[i].mail,stu[i].address,stu[i].tel); 
+            printf("\n是否要删除此人信息??\n是请按1,不是请按0:\n");
+   scanf("%d",&n);
+            if(n==1)  
+   {
+    for(j=i;j<m-1;j++)
+    {
+     strcpy(stu[j].name,stu[j+1].name);
+     stu[j].num=stu[j+1].num;
+     stu[j].sex=stu[j+1].sex;
+     stu[j].age=stu[j+1].age;
+     strcpy(stu[j].birthday,stu[j+1].birthday);
+     strcpy(stu[j].mail,stu[j+1].mail);
+     strcpy(stu[j].address,stu[j+1].address);
+     stu[j].tel=stu[j+1].tel;
+    }
+    flag=0;
+   }
+  }
+ }
+ if(!flag)
+  m=m-1;
+ else
+  printf("\n无此人信息!\n");
+    printf("\n 浏览删除后的所有学生信息:\n");
+    save(m);    
+    display(); 
+ printf("\n是否继续删除信息\n 继续请按1\n不继续请按0\n");
+ scanf("%d",&t);
+ switch(t)
+ {
+    case 1:del();break;
+    case 0:break;
+    default :break;
+ }
+}
+
+void query()
+{system("cls");
+    int t,flag;
+ printf("************按学号查询学生信息************\n");
+ do
+ {
+  printf("\n\t\t按学号查询请按1\n\t\t按姓名查询请按2\n\t\t返回主菜单请按3\n");
+  scanf("%d",&t);
+  if(t>=1&&t<=4)
+  {
+   flag=1;
+   break;
+  }
+  else
+  {
+   flag=0;
+   printf("您输入有误，请重新选择!");
+  }
+ }
+    while(flag==0);
+    while(flag==1)
+ {
+  switch(t)
+  {
+  case 1:printf("按学号查询\n");query_num();break;
+  case 2:printf("按姓名查询\n");query_name();break;
+  case 3:main();break;
+  default:break;
+  }
+  
+ }
+ 
+}
+/
+  { 
+  case 1:printf("学生的新学号为: ");
+   scanf("%d",&num);
+   stu[i-1].num=num;
+   break; 
+  case 2:printf("学生的新姓名: ");
+   scanf("%s",name);
+   strcpy(stu[i-1].name,name);
+   break; 
+  case 3:printf("学生的新性别: ");
+   getchar();
+   scanf("%c",&sex);
+   stu[i-1].sex=sex;
+   break; 
+  case 4:printf("学生的新年龄: ");
+   scanf("%d",&age);
+   stu[i-1].age=age;
+   break; 
+  case 5:printf("学生的新出生年月: ");
+   scanf("%s",birthday);
+   strcpy(stu[i-1].birthday,birthday);
+   break; 
+  case 6:printf("学生的新邮箱: ");
+   strcpy(stu[i-1].mail,mail);
+   break; 
+  case 7:printf("学生的新住址: ");
+   scanf("%s",address);
+   strcpy(stu[i-1].address,address);
+   break; 
+  case 8:printf("学生的新电话： ");
+   scanf("%ld",&tel);
+   stu[i-1].tel=tel;
+   break; 
+  }
+        printf("\n");
+  printf("\n是否确定已修改信息\n 是 请按1 \n不是---重新修改 请按2:  \n");
+        scanf("%d",&b);
+  
+ } 
+ while(b==1);
+ printf("\n浏览修改后的所有学生信息:\n");
+ printf("\n");
+ save(m);
+ display();
+ printf("\n继续修改请按1，不再修改请按0\n");
+ scanf("%d",&t);
+ switch(t)
+ {
+    case 1:change();break;
+    case 0:break;
+    default :break;
+ }
+}
+
